@@ -1,9 +1,12 @@
+require 'discount_rule'
+
 class Checkout
-  attr_reader :prices
-  private :prices
+  attr_reader :prices, :discount_rules
+  private :prices, :discount_rules
 
   def initialize(prices)
     @prices = prices
+    @discount_rules = DiscountRule.rules
   end
 
   def scan(item)
