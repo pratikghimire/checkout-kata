@@ -34,6 +34,10 @@ class Checkout
     items_in_package = discount_rule[:package_item]
     max_items = discount_rule[:max_item_discount_limit]
 
+    if discount_rule[:discount_type] == 'even_quantity'
+      return 0 unless (quantity % 2).zero?
+    end
+
     quantity / items_in_package
   end
 
