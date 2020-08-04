@@ -1,22 +1,24 @@
 require 'discount_rule'
+require 'scanner'
 
 class Checkout
-  attr_reader :prices, :discount_rules
-  private :prices, :discount_rules
+  attr_reader :prices, :discount_rules, :scanner
+  private :prices, :discount_rules, :scanner
 
   def initialize(prices)
     @prices = prices
+    @scanner = Scanner.new
     @discount_rules = DiscountRule.rules
   end
 
   def scan(item)
-    basket[item.to_sym] += 1
+    scanner.scan(item)
   end
 
   def total
     total = 0
 
-    basket.each do |item, count|
+    scanner.basket.each do |item, count|
       discount_rule = discount_rules.dig(item)
       discounted_items = discount_item_count(count, discount_rule)
 
@@ -45,9 +47,5 @@ class Checkout
 
   def max_quantity(quantity, max_items)
     quantity > max_items ? max_items : quantity
-  end
-
-  def basket
-    @basket ||= Hash.new(0)
   end
 end
