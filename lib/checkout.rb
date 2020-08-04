@@ -17,28 +17,25 @@ class Checkout
     total = 0
 
     basket.each do |item, count|
-      if item == :apple || item == :pear
-        if (count % 2 == 0)
-          total += prices.fetch(item) * (count / 2)
-        else
-          total += prices.fetch(item) * count
-        end
-      elsif item == :banana || item == :pineapple
-        if item == :pineapple
-          total += (prices.fetch(item) / 2)
-          total += (prices.fetch(item)) * (count - 1)
-        else
-          total += (prices.fetch(item) / 2) * count
-        end
-      else
-        total += prices.fetch(item) * count
-      end
+      discount_rule = discount_rules.dig(item)
+      discounted_items = discount_item_count(count, discount_rule)
+
+      total += (prices.fetch(item)) * (count - discounted_items)
     end
 
     total
   end
 
   private
+
+  def discount_item_count(quantity, discount_rule)
+    return 0 unless discount_rule
+
+    items_in_package = discount_rule[:package_item]
+    max_items = discount_rule[:max_item_discount_limit]
+
+    quantity / items_in_package
+  end
 
   def basket
     @basket ||= Hash.new(0)
